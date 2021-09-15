@@ -2,14 +2,21 @@
 #' Create an Archivist DataBase to
 #'
 #' @param ResetDB boolean to reset DataBase, Use True to reset DB, defaults to False
-#' @param DBdir defaults to "C://Database//dir"
+#' @param DBdir defaults to "C:"
 #'
 #' @return invisible
 #' @export
 #'
 #' @examples
-#' ConnectClusterDB()
-ConnectClusterDB <- function(DBdir = "C://Database//dir", ResetDB = F){
+#' # Make sure not to use a tempfile as in this example below
+#' ConnectClusterDB(DBdir = dirname(tempfile()))
+#'
+#' but rather:
+#' \dontrun{
+#' ConnectClusterDB(DBdir = "C:")
+#' }
+#'
+ConnectClusterDB <- function(DBdir = "C:", ResetDB = F){
 
   # 1. check input ----
   if (is.na(DBdir)){

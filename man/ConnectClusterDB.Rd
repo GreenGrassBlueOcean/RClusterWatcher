@@ -4,10 +4,10 @@
 \alias{ConnectClusterDB}
 \title{Create an Archivist DataBase to}
 \usage{
-ConnectClusterDB(DBdir = "C://Database//dir", ResetDB = F)
+ConnectClusterDB(DBdir = "C:", ResetDB = F)
 }
 \arguments{
-\item{DBdir}{defaults to "C://Database//dir"}
+\item{DBdir}{defaults to "C:"}
 
 \item{ResetDB}{boolean to reset DataBase, Use True to reset DB, defaults to False}
 }
@@ -18,5 +18,12 @@ invisible
 Create an Archivist DataBase to
 }
 \examples{
-ConnectClusterDB()
+# Make sure not to use a tempfile as in this example below
+ConnectClusterDB(DBdir = dirname(tempfile()))
+
+but rather:
+\dontrun{
+ConnectClusterDB(DBdir = "C:")
+}
+
 }
