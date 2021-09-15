@@ -11,7 +11,7 @@
 #' # Make sure not to use a tempfile as in this example below
 #' ConnectClusterDB(DBdir = dirname(tempfile()))
 #'
-#' but rather:
+#' # but rather:
 #' \dontrun{
 #' ConnectClusterDB(DBdir = "C:")
 #' }
