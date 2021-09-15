@@ -16,6 +16,13 @@ data.table containing the registered clusters
 Check which parallel clusters are registerd in the database
 }
 \examples{
-ConnectClusterDB()
+# Make sure not to use a tempfile as in this example below
+# ConnectClusterDB(DBdir = dirname(tempfile()))
+
+# but rather e.g.:
+\dontrun{
+ConnectClusterDB(DBdir = "C:")
+}
+ConnectClusterDB(dirname(tempfile()))
 CheckCluster()
 }

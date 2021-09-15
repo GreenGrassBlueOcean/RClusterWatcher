@@ -19,7 +19,14 @@ Verify if a registered Cluster is also an active Cluster
 }
 \examples{
 \dontrun{
-ConnectClusterDB(ResetDB = T)
+# Make sure not to use a tempfile as in this example below
+# ConnectClusterDB(DBdir = dirname(tempfile()))
+
+# but rather e.g.:
+\dontrun{
+ConnectClusterDB(DBdir = "C:")
+}
+ConnectClusterDB(ResetDB = T, dirname(tempfile()))
 cl <- parallel::makePSOCKcluster(names = 2)
 doParallel::registerDoParallel(cl)
 hash <- AddNewClustertoDB(cl)

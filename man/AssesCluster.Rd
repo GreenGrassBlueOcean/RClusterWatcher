@@ -19,7 +19,14 @@ Once verified,  Assess the health of cluster and return status and PIDs to be te
 }
 \examples{
 \dontrun{
-ConnectClusterDB(ResetDB = T)
+# Make sure not to use a tempfile as in this example below
+# ConnectClusterDB(DBdir = dirname(tempfile()))
+
+# but rather e.g.:
+\dontrun{
+ConnectClusterDB(DBdir = "C:")
+}
+ConnectClusterDB(ResetDB = T, dirname(tempfile()))
 cl <- parallel::makePSOCKcluster(names = 2)
 doParallel::registerDoParallel(cl)
 hash <- AddNewClustertoDB(cl)

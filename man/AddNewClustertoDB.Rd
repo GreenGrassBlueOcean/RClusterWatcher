@@ -27,9 +27,18 @@ md5 heash location in database
 StoreProcessData
 }
 \examples{
+#' # Make sure not to use a tempfile as in this example below
+# ConnectClusterDB(DBdir = dirname(tempfile()))
+
+# but rather e.g.:
+\dontrun{
+ConnectClusterDB(DBdir = "C:")
+}
+
+
 cl <- parallel::makePSOCKcluster(names = 2)
 doParallel::registerDoParallel(cl)
-ConnectClusterDB()
+ConnectClusterDB(DBdir = dirname(tempfile()))
 AddNewClustertoDB(cl)
 
 #necessary to satisfy cran check

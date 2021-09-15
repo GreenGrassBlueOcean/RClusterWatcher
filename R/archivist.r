@@ -52,9 +52,18 @@ ConnectClusterDB <- function(DBdir = "C:", ResetDB = F){
 #' @export
 #'
 #' @examples
+#' #' # Make sure not to use a tempfile as in this example below
+#' # ConnectClusterDB(DBdir = dirname(tempfile()))
+#'
+#' # but rather e.g.:
+#' \dontrun{
+#' ConnectClusterDB(DBdir = "C:")
+#' }
+#'
+#'
 #' cl <- parallel::makePSOCKcluster(names = 2)
 #' doParallel::registerDoParallel(cl)
-#' ConnectClusterDB()
+#' ConnectClusterDB(DBdir = dirname(tempfile()))
 #' AddNewClustertoDB(cl)
 #'
 #' #necessary to satisfy cran check
@@ -94,7 +103,14 @@ AddNewClustertoDB <- function( cl = NULL
 #' @export
 #'
 #' @examples
-#' ConnectClusterDB()
+#' # Make sure not to use a tempfile as in this example below
+#' # ConnectClusterDB(DBdir = dirname(tempfile()))
+#'
+#' # but rather e.g.:
+#' \dontrun{
+#' ConnectClusterDB(DBdir = "C:")
+#' }
+#' ConnectClusterDB(dirname(tempfile()))
 #' CheckCluster()
 CheckCluster <- function( DBdir =  .Options$RClusterWatcher.DBdir){
 
@@ -128,7 +144,14 @@ CheckCluster <- function( DBdir =  .Options$RClusterWatcher.DBdir){
 #'
 #' @examples
 #' \dontrun{
-#' ConnectClusterDB(ResetDB = T)
+#' # Make sure not to use a tempfile as in this example below
+#' # ConnectClusterDB(DBdir = dirname(tempfile()))
+#'
+#' # but rather e.g.:
+#' \dontrun{
+#' ConnectClusterDB(DBdir = "C:")
+#' }
+#' ConnectClusterDB(ResetDB = T, dirname(tempfile()))
 #' cl <- parallel::makePSOCKcluster(names = 2)
 #' doParallel::registerDoParallel(cl)
 #' hash <- AddNewClustertoDB(cl)
@@ -165,7 +188,14 @@ VerifyCluster <- function(ClusterHash = NULL, DBdir = .Options$RClusterWatcher.D
 #'
 #' @examples
 #' \dontrun{
-#' ConnectClusterDB(ResetDB = T)
+#' # Make sure not to use a tempfile as in this example below
+#' # ConnectClusterDB(DBdir = dirname(tempfile()))
+#'
+#' # but rather e.g.:
+#' \dontrun{
+#' ConnectClusterDB(DBdir = "C:")
+#' }
+#' ConnectClusterDB(ResetDB = T, dirname(tempfile()))
 #' cl <- parallel::makePSOCKcluster(names = 2)
 #' doParallel::registerDoParallel(cl)
 #' hash <- AddNewClustertoDB(cl)
