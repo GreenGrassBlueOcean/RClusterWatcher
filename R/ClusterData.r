@@ -1,4 +1,4 @@
-ExecPS <- function(x){system2("powershell", args = x , stdout = T)}
+
 
 
 #' Function that Returns PID of current R session
@@ -17,7 +17,7 @@ GetProcessData <- function(PID = Sys.getpid()){
     stop("only implemented for Windows")
   }
 
-
+  ExecPS <- function(x){system2("powershell", args = x , stdout = T)}
 
   ConvertPSTimeDate <- function(PSCommand){
     as.POSIXct(PSCommand,format="%m/%d/%Y %H:%M:%S %p",tz=Sys.timezone())
@@ -90,6 +90,8 @@ GetStartedClusterPIDData <- function(cl){
 #' KillPID(ClusterData[Role == "worker",]$PID)
 #' try(parallel::stopCluster(cl))}
 KillPID <- function(PIDlist){
+
+  ExecPS <- function(x){system2("powershell", args = x , stdout = T)}
 
   if(!identical(Sys.info()['sysname'][[1]], "Windows")){
     stop("only implemented for Windows")
