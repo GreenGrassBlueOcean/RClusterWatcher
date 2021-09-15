@@ -1,0 +1,4 @@
+    Image Name   PID Session Name Session# Mem Usage    ProcessStartTime   Role
+1:   Rterm.exe  8408      Console        1 137.136 K 2021-09-13 09:11:25   Host
+2: Rscript.exe 22140      Console        1  63.292 K 2021-09-13 09:11:28 worker
+3: Rscript.exe  3092      Console        1  63.308 K 2021-09-13 09:11:28 worker

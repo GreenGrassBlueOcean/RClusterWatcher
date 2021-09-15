@@ -1,0 +1,25 @@
+Package: RClusterWatcher
+Type: Package
+Title: Hunts down and kills Zombie Clusters
+Version: 0.1.0
+Author: Laurens van der Burg
+Maintainer: laurens van der Burg <laurens@ggbo.eu>
+Description: If PSOCK cluster have undergone a hardreset like ctrl+c. The host of the parallel cluster has died but the workers stay as zombies behind. Consuming systemresources and Ram. This package goes zombie hunting and kills the zombies. Windows only. The system commands that are used are powershell commands.
+License: LGPL (>= 2.0, < 3) | Mozilla Public License
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    archivist,
+    doParallel,
+    foreach,
+    magrittr,
+    parallel
+RoxygenNote: 7.1.1
+Suggests: 
+    rprojroot,
+    devtools,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Depends: 
+    R (>= 3.5.0),
+    data.table
