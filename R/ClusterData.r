@@ -64,9 +64,9 @@ GetStartedClusterPIDData <- function(cl){
 
   Host <- GetProcessData(PID = Sys.getpid())
   Host$Role <- "Host"
-  Nodes <- foreach::foreach(i = 1:length(cl), cl) %dopar% {
-    GetProcessData(PID = Sys.getpid())
-  } %>% data.table::rbindlist()
+  Nodes <- parallel::clusterCall(cl = cl, fun = GetProcessData) %>%
+           data.table::rbindlist()
+
   Nodes$Role <- "worker"
   RETURNtable <- data.table::rbindlist(list(Host,Nodes))
   return(RETURNtable)
