@@ -212,8 +212,9 @@ AssesCluster <- function(RetrievedClusterList, verbose = F){
                                                 , y = RetrievedClusterList$RegisteredCluster[, list(`Image Name`, PID, Role, ProcessStartTime)]
                                                 , by = c("PID"), suffixes = c(".Active", ".Retrieved")
                                                 , all = T)
-  Selector <- ifelse(test = ("ProcessStartTime.Retrieved" %in% names(MergedCluster)), yes = "ProcessStartTime.Retrieved", no = "ProcessStartTime")
-
+  # Selector <- ifelse(test = ("ProcessStartTime.Retrieved" %in% names(MergedCluster)), yes = "ProcessStartTime.Retrieved", no = "ProcessStartTime")
+  # print(Selector)
+  ProcessStartTime.Retrieved <- ProcessStartTime.Active <- NULL
   #1. Check if cluster is running normally
   if(  identical(unique(MergedCluster$ProcesState), "Running") && #1. Check if all nodes are running
        identical(nrow(MergedCluster), nrow(RetrievedClusterList$ActiveCluster)) &&  #2 check if no new nodes appeared
@@ -228,14 +229,14 @@ AssesCluster <- function(RetrievedClusterList, verbose = F){
 
 
 
-  else if(identical(nrow(MergedCluster[eval(get(Selector)) > SystemBootTime,]),0L )){
+  else if(identical(nrow(MergedCluster[ProcessStartTime.Retrieved > SystemBootTime,]),0L )){ #eval(get(Selector))
     RetrievedClusterList$Assesment <- "System has had reboot"
     RetrievedClusterList$PIDStoBeTerminated <- NA
     if(verbose){message("Cluster has been removed due to reboot")}
   }
 
   #2. Check if cluster is fully down
-  else if(  identical(unique(MergedCluster[Role == "worker",]$ProcesState), "down")){
+  else if(  identical(unique(MergedCluster[(Role == "worker" & is.na(ProcessStartTime.Active))  ,]$ProcesState), "down")){
        RetrievedClusterList$Assesment <- "down"
        RetrievedClusterList$PIDStoBeTerminated <- NA
        if(verbose){message("Cluster has been fully shutdown")}
