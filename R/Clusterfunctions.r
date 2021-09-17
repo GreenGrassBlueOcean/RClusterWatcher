@@ -46,6 +46,7 @@ ConnectClusterDB <- function(DBdir = "C:", ResetDB = F){
 #' @param cl parallel cluster object from parallel::makePSOCKcluster(names = 2)
 #' @param clusterName character: optional name for cluster
 #' @param verbose boolean, defaults to FALSE
+#' @param MasterCluster put in md5h hash of masterclusters, defaults to NA
 #'
 #' @return md5 heash location in database
 #' @importFrom utils capture.output
@@ -60,7 +61,6 @@ ConnectClusterDB <- function(DBdir = "C:", ResetDB = F){
 #' ConnectClusterDB(DBdir = "C:")
 #' }
 #'
-#'
 #' cl <- parallel::makePSOCKcluster(names = 2)
 #' doParallel::registerDoParallel(cl)
 #' ConnectClusterDB(DBdir = dirname(tempfile()))
@@ -69,7 +69,8 @@ ConnectClusterDB <- function(DBdir = "C:", ResetDB = F){
 #' #necessary to satisfy cran check
 #' parallel::stopCluster(cl)
 AddNewClustertoDB <- function( cl = NULL
-                             , clusterName = NA
+                             , clusterName = "super cluster"
+                             , MasterCluster = NA
                              , DBdir = .Options$RClusterWatcher.DBdir
                              , verbose = FALSE
                              ){
@@ -83,9 +84,12 @@ AddNewClustertoDB <- function( cl = NULL
   }
 
   ClusterData$ProcesState <- NULL
+  attr(ClusterData, "tags" ) = c(paste0("clusterName:",clusterName), paste0("MasterCluster:",MasterCluster))
   hash <- archivist::saveToLocalRepo(repoDir = DBdir
                              , artifact = ClusterData
-                             , userTags = c(clusterName, max(ClusterData$ProcessStartTime)))
+                             # , userTags =  #MasterCluster
+                             , use_flocks = T
+                             )
 
   message(paste0(capture.output(ClusterData), collapse = "\n"))
 
@@ -96,6 +100,7 @@ AddNewClustertoDB <- function( cl = NULL
 #' Check which parallel clusters are registerd in the database
 #'
 #' @param DBdir database location defaults to .Options$RClusterWatcher.DBdir
+#' @param StopSlaveCls Boolean, also try and stop slave clusters that are connected to a main slave cluster
 #'
 #' @importFrom data.table :=
 #'
@@ -112,7 +117,7 @@ AddNewClustertoDB <- function( cl = NULL
 #' }
 #' ConnectClusterDB(dirname(tempfile()))
 #' CheckCluster()
-CheckCluster <- function( DBdir =  .Options$RClusterWatcher.DBdir){
+CheckCluster <- function( DBdir =  .Options$RClusterWatcher.DBdir, StopSlaveCls = T){
 
   # Read In database with exisiting Clusters ---
   RegisteredClusters <- archivist::showLocalRepo(repo = DBdir) %>%
@@ -127,10 +132,12 @@ CheckCluster <- function( DBdir =  .Options$RClusterWatcher.DBdir){
 
 
   CheckOutcome <- lapply( X = RegisteredClusters$md5hash
-                        , FUN = function(hash){  hash %>%
+                        , FUN = function(hash, StopSlaveCls){  hash %>%
                                                  VerifyCluster() %>%
                                                  AssesCluster() %>%
-                                                 TakeActionOnCluster()})
+                                                 TakeActionOnCluster(StopSlaveCls = StopSlaveCls)}
+                        , StopSlaveCls = StopSlaveCls
+                        )
 
 }
 
@@ -250,7 +257,10 @@ AssesCluster <- function(RetrievedClusterList, verbose = F){
     RetrievedClusterList$Assesment <- "Zombie Cluster"
     RetrievedClusterList$PIDStoBeTerminated <- MergedCluster[Role == "worker",]$PID
     if(verbose){message(paste0("Zombie Cluster found!, PIDs ",RetrievedClusterList$PIDStoBeTerminated, " will be terminated") )}
-  } else {
+
+
+
+    } else {
     log <- tempfile("log", fileext = ".rds")
     saveRDS(object = list(RetrievedClusterList = RetrievedClusterList), file = log )
     stop(paste("Undefined Condition in function AssesCluster cluster data.table Can be found here", log))
@@ -267,6 +277,7 @@ return(RetrievedClusterList)
 #'
 #' @param AssessedClusterObject output from AssesCluster function
 #' @param DBdir database location defaults to .Options$RClusterWatcher.DBdir
+#' @param StopSlaveCls Boolean, also try and stop slave clusters
 #'
 #' @return a list containing the KilledPids and the RemovedHash.
 #' @keywords Internal
@@ -276,11 +287,16 @@ return(RetrievedClusterList)
 #' @examples
 #' \dontrun{"internal function, dont use directly"}
 #'
-TakeActionOnCluster <- function(AssessedClusterObject, DBdir = .Options$RClusterWatcher.DBdir ){
+TakeActionOnCluster <- function(AssessedClusterObject, DBdir = .Options$RClusterWatcher.DBdir, StopSlaveCls = T ){
 
   if(!identical(class(AssessedClusterObject), "AssessedClusterObject")){
       stop("TakeActionOnCluster can only take AssessedClusterObject")
   }
+
+  if(StopSlaveCls & identical(AssessedClusterObject$Assesment, "ZombieCluster Slave")){
+    StopSlaveClusters(MasterclusterHash = AssessedClusterObject$ClusterHash, DBdir = .Options$RClusterWatcher.DBdir)
+  }
+
 
   KilledPIDS <- NULL
   #1. eliminate PIDs that should be elimaited

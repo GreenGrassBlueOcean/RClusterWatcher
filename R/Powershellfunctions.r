@@ -48,7 +48,7 @@ GetProcessData <- function(PID = Sys.getpid()){
 
 #' Obtain ALL PID and startup information for a cluster
 #'
-#' @param cl a cluster made by e.g. parallell:makecluster
+#' @param cluster a cluster made by e.g. parallell:makecluster
 #'
 #' @return data.table with information about role and status of PID in a parallel cluster
 #' @export
@@ -59,12 +59,10 @@ GetProcessData <- function(PID = Sys.getpid()){
 #' doParallel::registerDoParallel(cl)
 #' GetStartedClusterPIDData(cl)
 #' }
-GetStartedClusterPIDData <- function(cl){
-  `%dopar%` <- foreach::`%dopar%`
-
+GetStartedClusterPIDData <- function(cluster){
   Host <- GetProcessData(PID = Sys.getpid())
   Host$Role <- "Host"
-  Nodes <- parallel::clusterCall(cl = cl, fun = GetProcessData) %>%
+  Nodes <- parallel::clusterCall(cl = cluster, fun = GetProcessData) %>%
            data.table::rbindlist()
 
   Nodes$Role <- "worker"
