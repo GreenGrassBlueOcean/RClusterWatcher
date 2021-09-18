@@ -13,7 +13,8 @@ Imports:
     doParallel,
     foreach,
     magrittr,
-    parallel
+    parallel,
+    RCurl
 RoxygenNote: 7.1.1
 Suggests: 
     rprojroot,
