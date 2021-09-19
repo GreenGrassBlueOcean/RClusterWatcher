@@ -1,4 +1,5 @@
 test_that("Check for Slave Clusters works when slave clusters are present", {
+library(RClusterWatcher)
 
   #' Build a nested cluster
   #'
