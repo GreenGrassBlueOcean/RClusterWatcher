@@ -21,7 +21,7 @@ test_that("Check for Slave Clusters works when slave clusters are present", {
     MasterClusterHash <- AddNewClustertoDB(cl = cl, DBdir = dirname(tempfile()))
     print(MasterClusterHash)
 
-    SlaveClusterHashes <- foreach::foreach(cl = cl, .errorhandling = 'pass', .export = c("AddNewClustertoDB", "GetStartedClusterPIDData", "GetProcessData")) %dopar% {
+    SlaveClusterHashes <- foreach::foreach(cl = cl, .errorhandling = 'pass', .packages = c("data.table", "archivist"),.export = c("AddNewClustertoDB", "GetStartedClusterPIDData", "GetProcessData")) %dopar% {
       rl <- parallel::makePSOCKcluster(names = 2)
       doParallel::registerDoParallel(rl)
       # MainCluster <-  GetStartedClusterPIDData(rl)
