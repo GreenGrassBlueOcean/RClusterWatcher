@@ -22,7 +22,7 @@ library(RClusterWatcher)
     MasterClusterHash <- AddNewClustertoDB(cl = cl, DBdir = dirname(tempfile()))
     print(MasterClusterHash)
 
-    SlaveClusterHashes <- foreach::foreach(cl = cl, .errorhandling = 'pass', .packages = c("data.table", "archivist", "RClusterWatcher"),.export = c("AddNewClustertoDB", "GetStartedClusterPIDData", "GetProcessData")) %dopar% {
+    SlaveClusterHashes <- foreach::foreach(cl = cl, .errorhandling = 'pass', .packages = c("data.table", "archivist"),.export = c("AddNewClustertoDB", "GetStartedClusterPIDData", "GetProcessData")) %dopar% {
 
       #0. load functions that can not be available in github workflows
       AddNewClustertoDB <- function( cl = NULL
