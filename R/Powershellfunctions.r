@@ -28,9 +28,8 @@ GetProcessData <- function(PID = Sys.getpid()){
   GetProcessStartTime <- paste0("Get-Process -ID ",PID," | select starttime")
   GetLastBootTimeCommand <- "Get-CimInstance -ClassName win32_operatingsystem | select lastbootuptime"
 
-
-  PSProcessOutput <- ExecPS(GetProcessDataCommand)
   LastBootTime <- ConvertPSTimeDate(ExecPS(GetLastBootTimeCommand)[4])
+  PSProcessOutput <- ExecPS(GetProcessDataCommand)
 
   if(identical(PSProcessOutput, "INFO: No tasks are running which match the specified criteria.")){
     return(data.table::data.table( PID = PID

@@ -119,6 +119,9 @@ AddNewClustertoDB <- function( cl = NULL
 #' CheckCluster()
 CheckCluster <- function( DBdir =  .Options$RClusterWatcher.DBdir, StopSlaveCls = T){
 
+  # allow clusters to close down from itself first
+  Sys.sleep(15)
+
   # Read In database with exisiting Clusters ---
   RegisteredClusters <- archivist::showLocalRepo(repo = DBdir) %>%
                         data.table::as.data.table()
